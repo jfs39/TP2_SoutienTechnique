@@ -48,11 +48,11 @@ public class ConnexionClient {
 		String urlFile = fullUrl.substring(fullUrl.lastIndexOf("/")+1);
 		String corps = "";
 		File fichierCourant = new File(ConnexionClient.class.getResource("pages/"+ urlFile).getFile());
-		File fichierErreur = new File(ConnexionClient.class.getResource("pages/erreur.html").getFile());
-		if(fichierCourant.exists() && urlFile.equals("")) {
+		//File fichierErreur = new File(ConnexionClient.class.getResource("pages/erreur.html").getFile());
+		if(fichierCourant.exists()) {
 			corps= lireFichier(fichierCourant);
 	        } else {
-	       corps = lireFichier(fichierErreur);
+	     //  corps = lireFichier(fichierErreur);
 	        }
 			
 
@@ -73,7 +73,6 @@ public class ConnexionClient {
         StringBuilder sb = new StringBuilder();
         InputStream in = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
- 
         String line;
         while ((line = br.readLine()) != null) {
             sb.append(line + System.lineSeparator());
