@@ -7,31 +7,21 @@ import java.util.concurrent.Executors;
 
 
 public class ServeurSocket {
-static ClientSocket connexionClient;
+
 	public static void main(String[] args) throws Exception {
+		ExecutorService service = Executors.newFixedThreadPool(6);
 		final int httpd = 8085;
-		int counter=0;
 		Socket socketCommunication = null;
 		ServerSocket socketServeur = null;
 
 		try {
 
 			socketServeur = new ServerSocket(httpd);
-
 			while(true) {
-				
-				socketCommunication = socketServeur.accept();
-		
-			
-				System.out.println("un client a fait une connexion");
-				connexionClient = new ClientSocket(socketCommunication);
-				connexionClient.getEntete();
-				connexionClient.envoiReponse();
-				connexionClient.fermetureFlux();
+			socketCommunication = socketServeur.accept();
+			service.execute(new HandleConnexions(socketCommunication));
 			}
-
 		}
-
 		catch (IOException e) {
 			 e.printStackTrace();
 		} finally {
@@ -46,7 +36,7 @@ static ClientSocket connexionClient;
 				System.out.println("Erreur !" + e.getMessage());
 			}
 		}
+		
 	}
 	
-
 }
