@@ -6,8 +6,13 @@ import java.util.concurrent.Executors;
 
 
 
+/**
+ * @author Jean-François Sergerie et Stéphanie Leduc
+ *
+ */
 public class ServeurSocket {
 
+	
 	public static void main(String[] args) throws Exception {
 		ExecutorService service = Executors.newFixedThreadPool(6);
 		final int httpd = 8085;

@@ -1,11 +1,20 @@
-import java.io.IOException;
+
 import java.net.Socket;
 
+/**
+ * @author Jean-François Sergerie et Stéphanie Leduc
+ *
+ */
 public class HandleConnexions implements Runnable {
-Socket socketCommunication;
+	Socket socketCommunication;
+
+
 	public HandleConnexions(Socket socketCommunication) {
 		this.socketCommunication = socketCommunication;
 	}
+	
+	
+	
 /*Cette méthode aide à envoyer des threads*/
 	public void run() {
 		ClientSocket connexionClient = new ClientSocket(socketCommunication);
@@ -16,7 +25,7 @@ Socket socketCommunication;
 			e.printStackTrace();
 		}
 		connexionClient.fermetureFlux();
-		System.out.println("un client a fait une connexion");
+		System.out.println("Un client a fait une connexion.");
 	}
 
 

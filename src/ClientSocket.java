@@ -1,25 +1,29 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-/*AUTEURS : Jean-François Sergerie et Stéphanie Leduc*/
 
+
+
+/**
+ * @author Jean-François Sergerie et Stéphanie Leduc
+ *
+ */
 public class ClientSocket {
+	
 	Socket socketCommunication;
 	PrintWriter out = null; 
 	BufferedReader in = null;
 	String fullUrl;
+	
 	File file;
 	File fichierErreur = new File(ClientSocket.class.getResource("siteHTTP/erreur.html").getFile());
+	File fichierErreur403 = new File(ClientSocket.class.getResource("siteHTTP/erreur403.html").getFile());
 	File fichierErreur404 = new File(ClientSocket.class.getResource("siteHTTP/erreur404.html").getFile());
 	
 	ClientSocket(Socket socketCommunication) {
@@ -34,17 +38,21 @@ public class ClientSocket {
 
 	}
 	
+	/*
+	 * Méthode qui retourne l'entête
+	 */
 	void getEntete() {
 		try {
 			String initialLine = in.readLine();
 			fullUrl = initialLine.split(" ")[1];
-			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
+	/*
+	 * Méthode servant à analyser la réponse et envoyer la page correspondante
+	 */
 	void envoiReponse() throws IOException, Exception {
 		String urlSite = fullUrl.substring(fullUrl.lastIndexOf("/") + 1);
 		String corps = "";
@@ -59,7 +67,7 @@ public class ClientSocket {
 			corps = lireFichier(file);
 			printOK(corps);
 		} else if (urlSite.equals("secret.html")) {
-			corps = lireFichier(fichierErreur);
+			corps = lireFichier(fichierErreur403);
 			printErreur403(corps);
 		} else {
 			corps = lireFichier(fichierErreur404);
@@ -67,6 +75,10 @@ public class ClientSocket {
 		}
 	}
 	
+	/*
+	 * Méthode qui sert à lire le fichier HTML demandé.
+	 * @param file : le nom du fichier à aller chercher
+	 */
 	public static String lireFichier(File file) throws IOException {
 
 		StringBuilder sb = new StringBuilder();
@@ -81,6 +93,9 @@ public class ClientSocket {
 	}
 	
 	
+	/**
+	 * Méthode qui sert simplement à fermer les PrintWriter et BufferedReader
+	 */
 	void fermetureFlux() {
 		try {
 			in.close();
@@ -90,7 +105,11 @@ public class ClientSocket {
 		}
 	}
 	
-	/* Cette méthode imprime la page souhaitée avec le status OK */
+	
+	/**
+	 * Méthode qui renvoit le contenu de la page demandée avec le status OK
+	 * @param corps : tout le contenu de la page HTML
+	 */
 	private void printOK(String corps) {
 		
 		int len = corps.length();
@@ -102,7 +121,11 @@ public class ClientSocket {
 		out.flush();
 
 	}
-	/* Cette méthode imprime la page souhaitée avec le code d'erreur 403 FORBIDDEN */
+	
+	/**
+	 * Méthode qui renvoit le code d'erreur 403 FORBIDDEN
+	 * @param corps : tout le contenu de la page HTML
+	 */
 	private void printErreur403(String corps) {
 		
 		int len = corps.length();
@@ -114,6 +137,11 @@ public class ClientSocket {
 		out.flush();
 	}
 	
+	
+	/**
+	 * Méthode qui renvoit le code d'erreur 404 NOT FOUND
+	 * @param corps : tout le contenu de la page HTML
+	 */
 	private void printErreur404(String corps) {
 
 		int len = corps.length();
