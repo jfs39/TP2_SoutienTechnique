@@ -8,17 +8,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 /*AUTEURS : Jean-François Sergerie et Stéphanie Leduc*/
 
-public class ConnexionClient {
+public class ClientSocket {
 	Socket socketCommunication;
 	PrintWriter out = null; 
 	BufferedReader in = null;
 	String fullUrl;
 	
-	ConnexionClient(Socket socketCommunication) {
+	ClientSocket(Socket socketCommunication) {
 		this.socketCommunication = socketCommunication;
 		try {
 			out = new PrintWriter(socketCommunication.getOutputStream());
@@ -34,28 +35,29 @@ public class ConnexionClient {
 		
 		try {
 			String initialLine = in.readLine();
+			if(initialLine != "") {
 			fullUrl = initialLine.split(" ")[1];
-			
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	void envoiReponse() throws IOException {
+	void envoiReponse() throws IOException, Exception {
 		
-		//socketCommunication.
-		String urlFile = fullUrl.substring(fullUrl.lastIndexOf("/")+1);
+		String urlSite = fullUrl.substring(fullUrl.lastIndexOf("/")+1);
+		//String urllll="siteHTTP/"+urlSite;
 		String corps = "";
-		File fichierCourant = new File(ConnexionClient.class.getResource("pages/"+ urlFile).getFile());
-		//File fichierErreur = new File(ConnexionClient.class.getResource("pages/erreur.html").getFile());
-		if(fichierCourant.exists()) {
-			corps= lireFichier(fichierCourant);
-	        } else {
-	     //  corps = lireFichier(fichierErreur);
-	        }
-			
-
+		URL url = getClass().getResource(urlSite);
+		
+		File file = new File(url.getPath());
+		//if(fichierCourant.exists() ) {
+			corps= lireFichier(file);
+	       // } else if(urlFile.equals("secret.html")) {
+	      // corps = lireFichier(fichierErreur);
+	       // }
+		
 		// longueur du corps de la réponse
 		int len = corps.length();
 
@@ -70,6 +72,7 @@ public class ConnexionClient {
 	}
 	
     public static String lireFichier(File file) throws IOException {
+    	
         StringBuilder sb = new StringBuilder();
         InputStream in = new FileInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -77,7 +80,7 @@ public class ConnexionClient {
         while ((line = br.readLine()) != null) {
             sb.append(line + System.lineSeparator());
         }
- 
+ br.close();
         return sb.toString();
     }
 	
