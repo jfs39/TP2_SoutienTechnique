@@ -6,9 +6,8 @@ Socket socketCommunication;
 	public HandleConnexions(Socket socketCommunication) {
 		this.socketCommunication = socketCommunication;
 	}
-
+/*Cette méthode aide à envoyer des threads*/
 	public void run() {
-		// TODO Auto-generated method stub
 		ClientSocket connexionClient = new ClientSocket(socketCommunication);
 		connexionClient.getEntete();
 		try {
