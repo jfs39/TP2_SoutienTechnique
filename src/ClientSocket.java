@@ -19,6 +19,8 @@ public class ClientSocket {
 	BufferedReader in = null;
 	String fullUrl;
 	File file;
+	File fichierErreur = new File(ClientSocket.class.getResource("siteHTTP/erreur.html").getFile());
+	File fichierErreur404 = new File(ClientSocket.class.getResource("siteHTTP/erreur404.html").getFile());
 	
 	ClientSocket(Socket socketCommunication) {
 		this.socketCommunication = socketCommunication;
@@ -44,46 +46,39 @@ public class ClientSocket {
 	}
 	
 	void envoiReponse() throws IOException, Exception {
-		String urlSite = fullUrl.substring(fullUrl.lastIndexOf("/")+1);
+		String urlSite = fullUrl.substring(fullUrl.lastIndexOf("/") + 1);
 		String corps = "";
-		URL url = getClass().getResource("siteHTTP/"+urlSite);
+		URL url = getClass().getResource("siteHTTP/" + urlSite);
 		try {
-		 file = new File(url.getPath());
-		}catch(Exception e) {
-		 file = new File("siteHTTP/erreur.html");
+			file = new File(url.getPath());
+		} catch (Exception e) {
+			file = new File("siteHTTP/erreur.html");
 		}
-		File fichierErreur = new File(ClientSocket.class.getResource("siteHTTP/erreur.html").getFile());
-		if(file.exists() && !urlSite.equals("secret.html") ) {
-			corps= lireFichier(file);
+
+		if (file.exists() && !urlSite.equals("secret.html")) {
+			corps = lireFichier(file);
 			printOK(corps);
-	        } else if(urlSite.equals("secret.html")) {
-	       corps = lireFichier(fichierErreur);
-	        printErreur403(corps);
-	        } else {
-	        	corps = lireFichier(fichierErreur);
-	        	  printErreur404(corps);
-	        }
-		
-		// longueur du corps de la réponse
-		
-
-		// envoie de la line de début, entêtes, la ligne vide et le corps
-
-
+		} else if (urlSite.equals("secret.html")) {
+			corps = lireFichier(fichierErreur);
+			printErreur403(corps);
+		} else {
+			corps = lireFichier(fichierErreur404);
+			printErreur404(corps);
+		}
 	}
 	
-    public static String lireFichier(File file) throws IOException {
-    	
-        StringBuilder sb = new StringBuilder();
-        InputStream in = new FileInputStream(file);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
-        String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line + System.lineSeparator());
-        }
-        br.close();
-        return sb.toString();
-    }
+	public static String lireFichier(File file) throws IOException {
+
+		StringBuilder sb = new StringBuilder();
+		InputStream in = new FileInputStream(file);
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		String line;
+		while ((line = br.readLine()) != null) {
+			sb.append(line + System.lineSeparator());
+		}
+		br.close();
+		return sb.toString();
+	}
 	
 	
 	void fermetureFlux() {
@@ -95,8 +90,9 @@ public class ClientSocket {
 		}
 	}
 	
-	/* Cette méthode imprime la page avec le status OK */
-	private void printOK( String corps) {
+	/* Cette méthode imprime la page souhaitée avec le status OK */
+	private void printOK(String corps) {
+		
 		int len = corps.length();
 		out.print("HTTP-1.0 200 OK\r\n");
 		out.print("Content-Length: " + len + "\r\n");
@@ -104,10 +100,11 @@ public class ClientSocket {
 		out.print(corps);
 
 		out.flush();
-		
+
 	}
-	/* Cette méthode imprime la page avec le code d'erreur 403 FORBIDDEN */
-	private void printErreur403(String corps){
+	/* Cette méthode imprime la page souhaitée avec le code d'erreur 403 FORBIDDEN */
+	private void printErreur403(String corps) {
+		
 		int len = corps.length();
 		out.print("HTTP-1.0 403 FORBIDDEN\r\n");
 		out.print("Content-Length: " + len + "\r\n");
@@ -118,7 +115,7 @@ public class ClientSocket {
 	}
 	
 	private void printErreur404(String corps) {
-		
+
 		int len = corps.length();
 		out.print("HTTP-1.0 404 NOT FOUND\r\n");
 		out.print("Content-Length: " + len + "\r\n");
